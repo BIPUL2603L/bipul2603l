@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Simple Calculator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="calculator">
+    <div id="display" class="display">0</div>
+    <div class="buttons">
+      <button class="btn function" data-action="clear">C</button>
+      <button class="btn function" data-action="sign">±</button>
+      <button class="btn function" data-action="percent">%</button>
+      <button class="btn op" data-action="/">÷</button>
+
+      <button class="btn num">7</button>
+      <button class="btn num">8</button>
+      <button class="btn num">9</button>
+      <button class="btn op" data-action="*">×</button>
+
+      <button class="btn num">4</button>
+      <button class="btn num">5</button>
+      <button class="btn num">6</button>
+      <button class="btn op" data-action="-">−</button>
+
+      <button class="btn num">1</button>
+      <button class="btn num">2</button>
+      <button class="btn num">3</button>
+      <button class="btn op" data-action="+">+</button>
+
+      <button class="btn num zero">0</button>
+      <button class="btn num">.</button>
+      <button class="btn equals" data-action="=">=</button>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const display = document.getElementById('display');
+      let current = null;
+      let operator = null;
+      let waitingForNew = false;
+
+      function inputDigit(d) {
+        if (waitingForNew) {
+          display.textContent = d === '.' ? '0.' : d;
+          waitingForNew = false;
+        } else {
+          if (d === '.' && display.textContent.includes('.')) return;
+          display.textContent = display.textContent === '0' && d !== '.' ? d : display.textContent + d;
+        }
+      }
+
+      function handleOperator(op) {
+        const value = parseFloat(display.textContent);
+        if (current === null) {
+          current = value;
+        } else if (!waitingForNew) {
+          compute(value);
+        }
+        operator = op;
+        waitingForNew = true;
+      }
+
+      function compute(value) {
+        if (operator === '+') current = current + value;
+        else if (operator === '-') current = current - value;
+        else if (operator === '*') current = current * value;
+        else if (operator === '/') {
+          if (value === 0) { alert('Cannot divide by zero'); current = 0; }
+          else current = current / value;
+        } else current = value;
+        display.textContent = (Number.isInteger(current) ? current : current);
+      }
+
+      function clearAll() {
+        display.textContent = '0';
+        current = null;
+        operator = null;
+        waitingForNew = false;
+      }
+
+      function toggleSign() {
+        if (display.textContent === '0') return;
+        if (display.textContent.startsWith('-')) display.textContent = display.textContent.slice(1);
+        else display.textContent = '-' + display.textContent;
+      }
+
+      function percent() {
+        const val = parseFloat(display.textContent);
+        display.textContent = (val / 100).toString();
+      }
+
+      document.querySelectorAll('.btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const action = btn.dataset.action;
+          const text = btn.textContent;
+
+          if (btn.classList.contains('num')) {
+            inputDigit(text);
+            return;
+          }
+
+          if (action === 'clear') clearAll();
+          else if (action === 'sign') toggleSign();
+          else if (action === 'percent') percent();
+          else if (action === '=') {
+            if (operator !== null && !waitingForNew) {
+              compute(parseFloat(display.textContent));
+              operator = null;
+              waitingForNew = true;
+              current = null;
+            }
+          } else {
+            // it's an operator
+            handleOperator(action);
+          }
+        });
+      });
+
+      // keyboard support
+      window.addEventListener('keydown', (e) => {
+        if ((e.key >= '0' && e.key <= '9') || e.key === '.') inputDigit(e.key);
+        else if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/') handleOperator(e.key);
+        else if (e.key === 'Enter' || e.key === '=') {
+          e.preventDefault();
+          document.querySelector('[data-action="="]').click();
+        } else if (e.key === 'Backspace') {
+          const t = display.textContent;
+          display.textContent = t.length > 1 ? t.slice(0, -1) : '0';
+        } else if (e.key.toLowerCase() === 'c') clearAll();
+      });
+    })();
+  </script>
+</body>
+</html>

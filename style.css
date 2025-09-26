@@ -1,0 +1,44 @@
+/* File: style.css */
+* { box-sizing: border-box; }
+body {
+  display:flex; align-items:center; justify-content:center;
+  height:100vh; margin:0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: linear-gradient(135deg, #f2f6ff 0%, #e9f7ff 100%);
+}
+.calculator {
+  width: 320px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(10,30,60,0.12);
+  padding: 18px;
+}
+.display {
+  background: #f3f7fb;
+  border-radius: 10px;
+  padding: 18px;
+  font-size: 32px;
+  text-align: right;
+  margin-bottom: 12px;
+  min-height:56px;
+  overflow:hidden;
+}
+.buttons {
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:8px;
+}
+.btn {
+  padding: 16px;
+  font-size: 18px;
+  border-radius: 10px;
+  border: none;
+  cursor:pointer;
+  box-shadow: 0 4px 10px rgba(15,30,60,0.06);
+}
+.btn:active { transform: translateY(1px); }
+.btn.num { background: #ffffff; }
+.btn.function { background: #f0f4ff; }
+.btn.op { background: #ffeedd; }
+.btn.equals { background: #ffd6a5; grid-column: 4 / 5; height:100%; }
+.zero { grid-column: 1 / 3; }
